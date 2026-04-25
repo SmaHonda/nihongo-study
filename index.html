@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>日本語 学習帳</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Serif+JP:wght@400;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Splash / Loading -->
+<div id="splash">
+  <div class="splash-inner">
+    <div class="splash-logo">学</div>
+    <div class="splash-title">日本語 学習帳</div>
+    <div class="splash-sub">N1 Study Journal</div>
+  </div>
+</div>
+
+<!-- App Shell -->
+<div id="app" class="hidden">
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-left">
+      <span class="header-logo">学</span>
+      <span class="header-title" id="page-title">ホーム</span>
+    </div>
+    <div class="header-right">
+      <button class="icon-btn" id="sync-btn" title="Google Sheet 同步">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+      </button>
+      <button class="icon-btn" id="settings-btn" title="設定">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main class="app-main" id="main-content">
+
+    <!-- ===== HOME PAGE ===== -->
+    <section id="page-home" class="page active">
+      <div class="home-stats">
+        <div class="stat-card">
+          <div class="stat-num" id="stat-total">0</div>
+          <div class="stat-label">總單字</div>
+        </div>
+        <div class="stat-card accent">
+          <div class="stat-num" id="stat-today">0</div>
+          <div class="stat-label">今日複習</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="stat-mastered">0</div>
+          <div class="stat-label">已掌握</div>
+        </div>
+      </div>
+
+      <!-- Level filter -->
+      <div class="level-row">
+        <button class="level-pill active" data-level="all">全部</button>
+        <button class="level-pill" data-level="N1">N1</button>
+        <button class="level-pill" data-level="N2">N2</button>
+        <button class="level-pill" data-level="N3">N3</button>
+        <button class="level-pill" data-level="N4">N4</button>
+        <button class="level-pill" data-level="N5">N5</button>
+      </div>
+
+      <!-- Category tabs -->
+      <div class="cat-tabs">
+        <button class="cat-tab active" data-cat="vocab">単語</button>
+        <button class="cat-tab" data-cat="grammar">文法</button>
+        <button class="cat-tab" data-cat="reading">読解</button>
+      </div>
+
+      <!-- Word List -->
+      <div class="word-list" id="word-list">
+        <div class="empty-state" id="empty-state">
+          <div class="empty-icon">空</div>
+          <p>まだ単語がありません</p>
+          <p class="empty-hint">右下のボタンで追加しましょう</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== QUIZ PAGE ===== -->
+    <section id="page-quiz" class="page">
+      <div class="quiz-header">
+        <div class="quiz-progress-bar"><div class="quiz-progress-fill" id="quiz-progress-fill"></div></div>
+        <div class="quiz-counter" id="quiz-counter">0 / 0</div>
+      </div>
+      <div id="quiz-content">
+        <div class="quiz-ready">
+          <div class="quiz-ready-icon">📚</div>
+          <h2>抽卡測驗</h2>
+          <div class="quiz-options">
+            <label>測驗範圍</label>
+            <div class="level-row" style="margin:8px 0 16px">
+              <button class="level-pill active" data-qlevel="all">全部</button>
+              <button class="level-pill" data-qlevel="N1">N1</button>
+              <button class="level-pill" data-qlevel="N2">N2</button>
+              <button class="level-pill" data-qlevel="N3">N3</button>
+            </div>
+            <label>測驗類型</label>
+            <div class="level-row" style="margin:8px 0 16px">
+              <button class="level-pill active" data-qcat="vocab">単語</button>
+              <button class="level-pill" data-qcat="grammar">文法</button>
+            </div>
+            <label>題目數量</label>
+            <div class="level-row" style="margin:8px 0 16px">
+              <button class="level-pill" data-qcount="10">10題</button>
+              <button class="level-pill active" data-qcount="20">20題</button>
+              <button class="level-pill" data-qcount="50">50題</button>
+            </div>
+          </div>
+          <button class="primary-btn full-width" id="start-quiz-btn">開始測驗</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== PROGRESS PAGE ===== -->
+    <section id="page-progress" class="page">
+      <h2 class="section-title">學習進度</h2>
+      <div class="progress-overview" id="progress-overview"></div>
+      <h3 class="section-subtitle">各等級完成率</h3>
+      <div class="level-progress" id="level-progress"></div>
+      <h3 class="section-subtitle">近7日學習記錄</h3>
+      <div class="history-grid" id="history-grid"></div>
+    </section>
+
+    <!-- ===== ADD/EDIT PAGE ===== -->
+    <section id="page-add" class="page">
+      <div class="form-container">
+        <h2 class="form-title" id="form-title">新增單字</h2>
+
+        <div class="form-group">
+          <label>類型</label>
+          <div class="level-row" style="margin:6px 0">
+            <button class="level-pill active" data-fcat="vocab">単語</button>
+            <button class="level-pill" data-fcat="grammar">文法</button>
+            <button class="level-pill" data-fcat="reading">読解</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>JLPT 等級</label>
+          <div class="level-row" style="margin:6px 0">
+            <button class="level-pill active" data-flevel="N1">N1</button>
+            <button class="level-pill" data-flevel="N2">N2</button>
+            <button class="level-pill" data-flevel="N3">N3</button>
+            <button class="level-pill" data-flevel="N4">N4</button>
+            <button class="level-pill" data-flevel="N5">N5</button>
+          </div>
+        </div>
+
+        <div class="form-group" id="vocab-fields">
+          <div class="form-group">
+            <label>日文単語 <span class="required">*</span></label>
+            <input type="text" id="f-word" placeholder="例：挨拶、曖昧..." class="form-input japanese-font">
+          </div>
+          <div class="form-group">
+            <label>讀音（假名）</label>
+            <input type="text" id="f-reading" placeholder="例：あいさつ、あいまい..." class="form-input japanese-font">
+          </div>
+          <div class="form-group">
+            <label>中文意思 <span class="required">*</span></label>
+            <input type="text" id="f-meaning" placeholder="例：打招呼、模糊曖昧..." class="form-input">
+          </div>
+          <div class="form-group">
+            <label>例句</label>
+            <textarea id="f-example" placeholder="日文例句（可選）..." class="form-input form-textarea japanese-font" rows="2"></textarea>
+          </div>
+          <div class="form-group">
+            <label>例句中文</label>
+            <textarea id="f-example-zh" placeholder="例句中文翻譯（可選）..." class="form-input form-textarea" rows="2"></textarea>
+          </div>
+        </div>
+
+        <div class="form-group" id="grammar-fields" style="display:none">
+          <div class="form-group">
+            <label>文法句型 <span class="required">*</span></label>
+            <input type="text" id="f-grammar-pattern" placeholder="例：〜にもかかわらず..." class="form-input japanese-font">
+          </div>
+          <div class="form-group">
+            <label>說明</label>
+            <textarea id="f-grammar-desc" placeholder="文法說明..." class="form-input form-textarea" rows="2"></textarea>
+          </div>
+          <div class="form-group">
+            <label>例句</label>
+            <textarea id="f-grammar-example" placeholder="日文例句..." class="form-input form-textarea japanese-font" rows="2"></textarea>
+          </div>
+          <div class="form-group">
+            <label>例句中文</label>
+            <textarea id="f-grammar-example-zh" placeholder="例句翻譯..." class="form-input form-textarea" rows="2"></textarea>
+          </div>
+        </div>
+
+        <div class="form-group" id="reading-fields" style="display:none">
+          <div class="form-group">
+            <label>標題</label>
+            <input type="text" id="f-reading-title" placeholder="讀解題目標題..." class="form-input">
+          </div>
+          <div class="form-group">
+            <label>文章內容 <span class="required">*</span></label>
+            <textarea id="f-reading-text" placeholder="日文文章..." class="form-input form-textarea japanese-font" rows="5"></textarea>
+          </div>
+          <div class="form-group">
+            <label>題目與解答</label>
+            <textarea id="f-reading-qa" placeholder="問題：...\n答え：..." class="form-input form-textarea" rows="4"></textarea>
+          </div>
+          <div class="form-group">
+            <label>來源 / 出處</label>
+            <input type="text" id="f-reading-source" placeholder="例：2023年N1試題..." class="form-input">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>備注 / 記憶線索</label>
+          <input type="text" id="f-note" placeholder="個人備注..." class="form-input">
+        </div>
+
+        <div class="form-actions">
+          <button class="secondary-btn" id="cancel-add-btn">取消</button>
+          <button class="primary-btn" id="save-word-btn">儲存</button>
+        </div>
+
+        <div id="edit-id" style="display:none"></div>
+      </div>
+    </section>
+
+    <!-- ===== SETTINGS PAGE ===== -->
+    <section id="page-settings" class="page">
+      <h2 class="section-title">設定</h2>
+
+      <div class="settings-group">
+        <div class="settings-label">Google Sheets 串接</div>
+        <div class="form-group">
+          <label>試算表 ID</label>
+          <input type="text" id="gs-sheet-id" placeholder="試算表網址中的 ID..." class="form-input mono-font">
+        </div>
+        <div class="form-group">
+          <label>Apps Script Web App URL</label>
+          <input type="text" id="gs-script-url" placeholder="https://script.google.com/macros/s/..." class="form-input mono-font">
+        </div>
+        <button class="primary-btn full-width" id="save-gs-btn">儲存連線設定</button>
+        <div class="gs-help">
+          <details>
+            <summary>如何設定 Google Sheets 串接？</summary>
+            <div class="help-content">
+              <ol>
+                <li>建立新的 Google 試算表，複製網址中的 ID（/d/ 和 /edit 之間的部分）</li>
+                <li>開啟「擴充功能 → Apps Script」</li>
+                <li>貼上 <code>apps-script.gs</code> 的內容</li>
+                <li>點擊「部署 → 新增部署作業 → 網頁應用程式」</li>
+                <li>執行身分選「我」，存取權選「任何人」</li>
+                <li>複製 Web App URL 貼到上方欄位</li>
+              </ol>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <div class="settings-label">資料管理</div>
+        <button class="secondary-btn full-width" id="export-btn">匯出資料（JSON）</button>
+        <button class="secondary-btn full-width" id="import-btn" style="margin-top:8px">匯入資料（JSON）</button>
+        <input type="file" id="import-file" accept=".json" style="display:none">
+        <button class="danger-btn full-width" id="clear-btn" style="margin-top:8px">清除所有資料</button>
+      </div>
+
+      <div class="settings-group">
+        <div class="settings-label">關於</div>
+        <div class="about-text">日本語 学習帳 v1.0<br>為 JLPT N1 考試設計的個人學習工具</div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FAB -->
+  <button class="fab" id="fab-btn" title="新增">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+  </button>
+
+  <!-- Bottom Nav -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" data-page="home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span>ホーム</span>
+    </button>
+    <button class="nav-btn" data-page="quiz">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+      <span>テスト</span>
+    </button>
+    <button class="nav-btn" data-page="progress">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      <span>進度</span>
+    </button>
+    <button class="nav-btn" data-page="settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <span>設定</span>
+    </button>
+  </nav>
+
+</div>
+
+<!-- QUIZ CARD (overlay) -->
+<div id="quiz-overlay" class="quiz-overlay hidden">
+  <div class="quiz-card-wrap">
+    <div class="quiz-top-bar">
+      <button class="icon-btn light" id="quiz-close-btn">✕</button>
+      <div class="quiz-score-bar">
+        <span id="qscore-correct" class="q-correct">0 ✓</span>
+        <span id="qscore-wrong" class="q-wrong">0 ✗</span>
+      </div>
+      <div class="quiz-prog-text" id="quiz-prog-text">1/20</div>
+    </div>
+
+    <div class="quiz-card" id="quiz-card">
+      <div class="quiz-level-badge" id="quiz-badge">N1</div>
+      <div class="quiz-question" id="quiz-question">問題</div>
+      <div class="quiz-reading" id="quiz-reading"></div>
+      <div class="quiz-tap-hint" id="quiz-tap-hint">タップして答えを見る</div>
+      <div class="quiz-answer hidden" id="quiz-answer">
+        <div class="answer-divider"></div>
+        <div class="answer-text" id="answer-text"></div>
+        <div class="answer-example" id="answer-example"></div>
+      </div>
+    </div>
+
+    <div class="quiz-actions hidden" id="quiz-actions">
+      <button class="quiz-btn wrong" id="btn-wrong">✗ 不會</button>
+      <button class="quiz-btn correct" id="btn-correct">✓ 記得</button>
+    </div>
+
+    <div class="quiz-result hidden" id="quiz-result">
+      <div class="result-circle">
+        <div class="result-score" id="result-score">0%</div>
+        <div class="result-label">正確率</div>
+      </div>
+      <div class="result-detail" id="result-detail"></div>
+      <button class="primary-btn" id="retry-btn">再挑戰</button>
+      <button class="secondary-btn" id="finish-btn">終了</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="toast hidden"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
